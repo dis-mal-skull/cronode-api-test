@@ -2,6 +2,10 @@
   "use strict";
 
   const CATALOG = window.CRONODE_CATALOG || [];
+  const CATEGORY_TOTALS = CATALOG.reduce((totals, module) => {
+    totals[module.category] = (totals[module.category] || 0) + module.endpoints.length;
+    return totals;
+  }, {});
   const TOTAL_ENDPOINTS = CATALOG.reduce((total, module) => total + module.endpoints.length, 0);
 
   const STORAGE_KEYS = {
@@ -10,7 +14,8 @@
     history: "cronode.history",
     env: "cronode.env",
     customBase: "cronode.customBase",
-    cors: "cronode.cors"
+    cors: "cronode.cors",
+    category: "cronode.category"
   };
 
   const ENV_BASES = {
@@ -24,9 +29,12 @@
   const LOGIN_BUTTON_LABEL = "Iniciar sesión y capturar token";
 
   const PRE_CONFIGURED_KEYS = [
-    { label: "CPIC Master Key", value: "cpic-master-key-demo-2026" },
-    { label: "AutoDoc Service Key", value: "autodoc-service-key-demo-2026" },
-    { label: "Face Recognition Key", value: "face-recognition-key-demo-2026" }
+    {
+      label: "CPIC Master Key",
+      value: "6df3418530dd69237774158c434a7995725e84b0cbbed8e8f4d6d036d2502ffc"
+    },
+    { label: "AutoDoc Service Key", value: "ak_live_autodoc_98234xz1" },
+    { label: "Face Recognition Key", value: "ak_live_face_84762rt3" }
   ];
 
   const $ = (selector, root = document) => root.querySelector(selector);
@@ -61,14 +69,18 @@
 
   const storedEnv = readStore(STORAGE_KEYS.env, "test");
   const initialEnv = ["test", "local", "custom"].includes(storedEnv) ? storedEnv : "test";
+  const storedCategory = readStore(STORAGE_KEYS.category, "jwt");
+  const initialCategory = ["jwt", "apiKey"].includes(storedCategory) ? storedCategory : "jwt";
 
   const state = {
     env: initialEnv,
+    category: initialCategory,
     customBase: readStore(STORAGE_KEYS.customBase, ""),
     corsProxy: readStore(STORAGE_KEYS.cors, "0") === "1",
     jwt: readStore(STORAGE_KEYS.jwt, ""),
     apiKey: readStore(STORAGE_KEYS.apiKey, ""),
     history: loadHistory(),
+    currentEndpoint: null,
     method: "GET",
     path: "/api/v1/areas",
     headers: [],
@@ -94,6 +106,9 @@
     creditsBtn: $("#btn-credits"),
     endpointSearch: $("#endpoint-search"),
     endpointCount: $("#endpoint-count"),
+    categoryButtons: $$("[data-category]"),
+    jwtCount: $("#jwt-count"),
+    apiKeyCount: $("#api-key-count"),
     catalog: $("#catalog"),
     catalogEmpty: $("#catalog-empty"),
     methodSelect: $("#method-select"),
@@ -291,12 +306,20 @@
     return `${base}${path}${separator}${query}`;
   }
 
-  function getAutoHeaders() {
+  function getEffectiveAuthMode() {
+    if (state.currentEndpoint) {
+      return state.currentEndpoint.authHeaderKey === "x-api-key" ? "apiKey" : "jwt";
+    }
+    return state.category;
+  }
+
+  function getAutoHeaders(mode = null) {
+    const activeMode = mode || getEffectiveAuthMode();
     const headers = [];
-    if (state.jwt) {
+    if (state.jwt && activeMode === "jwt") {
       headers.push({ key: "Authorization", value: `Bearer ${state.jwt}`, source: "jwt" });
     }
-    if (state.apiKey) {
+    if (state.apiKey && activeMode === "apiKey") {
       headers.push({ key: "x-api-key", value: state.apiKey, source: "apikey" });
     }
     return headers;
@@ -346,6 +369,10 @@
 
   function persistCors() {
     writeStore(STORAGE_KEYS.cors, state.corsProxy ? "1" : "0");
+  }
+
+  function persistCategory() {
+    writeStore(STORAGE_KEYS.category, state.category);
   }
 
   function persistHistory() {
@@ -473,11 +500,14 @@
 
   function renderAutoHeaders() {
     refs.autoHeadersList.replaceChildren();
-    const autoHeaders = getAutoHeaders();
+    const mode = getEffectiveAuthMode();
+    const autoHeaders = getAutoHeaders(mode);
     if (!autoHeaders.length) {
-      refs.autoHeadersList.append(
-        el("p", "auto-empty", "Sin cabeceras automáticas. Configura un JWT o una API key para inyectarlas en cada petición.")
-      );
+      const message =
+        mode === "apiKey"
+          ? "Sin API key configurada. Selecciona una llave en Credenciales para enviarla como x-api-key."
+          : "Sin JWT configurado. Usa el Login Rápido o guarda un token en Credenciales.";
+      refs.autoHeadersList.append(el("p", "auto-empty", message));
       return;
     }
     autoHeaders.forEach((item) => {
@@ -545,6 +575,9 @@
     const found = findEndpoint(id);
     if (!found) return;
     const { module, endpoint } = found;
+    const categoryChanged = module.category !== state.category;
+    state.category = module.category;
+    state.currentEndpoint = endpoint;
     state.selectedEndpointId = endpoint.id;
     state.method = endpoint.method;
     state.path = endpoint.path;
@@ -553,6 +586,17 @@
     state.bodyType = endpoint.bodyType === "multipart" ? "multipart" : "json";
     state.body = endpoint.body ? JSON.stringify(endpoint.body, null, 2) : "";
     state.file = null;
+    if (endpoint.defaultApiKey && !state.apiKey) {
+      state.apiKey = endpoint.defaultApiKey;
+      persistAuth();
+      updateCredentialStates();
+    }
+    persistCategory();
+    if (categoryChanged) {
+      refs.endpointSearch.value = "";
+      updateCategoryUI();
+      renderCatalog();
+    }
     refs.methodSelect.value = state.method;
     refs.pathInput.value = state.path;
     syncMethodSelect();
@@ -566,10 +610,11 @@
 
   function renderCatalog(filter = "") {
     const query = filter.trim().toLowerCase();
+    const categoryTotal = CATEGORY_TOTALS[state.category] || 0;
     let visible = 0;
     refs.catalog.replaceChildren();
 
-    CATALOG.forEach((module) => {
+    CATALOG.filter((module) => module.category === state.category).forEach((module) => {
       const endpoints = module.endpoints.filter((endpoint) => {
         if (!query) return true;
         const haystack = `${module.name} ${endpoint.name} ${endpoint.method} ${endpoint.path}`.toLowerCase();
@@ -605,8 +650,31 @@
       refs.catalog.append(section);
     });
 
-    refs.endpointCount.textContent = query ? `${visible} / ${TOTAL_ENDPOINTS} endpoints` : `${TOTAL_ENDPOINTS} endpoints`;
+    refs.endpointCount.textContent = query ? `${visible} / ${categoryTotal} endpoints` : `${TOTAL_ENDPOINTS} endpoints`;
     refs.catalogEmpty.hidden = visible > 0;
+  }
+
+  function updateCategoryUI() {
+    refs.categoryButtons.forEach((button) => {
+      const active = button.dataset.category === state.category;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", String(active));
+    });
+    if (refs.jwtCount) refs.jwtCount.textContent = String(CATEGORY_TOTALS.jwt || 0);
+    if (refs.apiKeyCount) refs.apiKeyCount.textContent = String(CATEGORY_TOTALS.apiKey || 0);
+  }
+
+  function setCategory(category) {
+    if (!["jwt", "apiKey"].includes(category) || category === state.category) return;
+    state.category = category;
+    state.currentEndpoint = null;
+    const firstModule = CATALOG.find((module) => module.category === category);
+    if (firstModule) expandedModules.add(firstModule.id);
+    persistCategory();
+    refs.endpointSearch.value = "";
+    renderCatalog();
+    updateCategoryUI();
+    renderAutoHeaders();
   }
 
   function handleCatalogClick(event) {
@@ -819,6 +887,7 @@
   function addHistory(targetUrl, status) {
     const snapshot = {
       env: state.env,
+      category: state.category,
       customBase: state.customBase,
       method: state.method,
       path: state.path,
@@ -901,6 +970,8 @@
       state.env = snapshot.env;
     }
 
+    state.category = snapshot.category === "apiKey" ? "apiKey" : "jwt";
+    state.currentEndpoint = null;
     state.method = snapshot.method || item.method || "GET";
     state.path = snapshot.path || item.path || "/";
     state.headers = Array.isArray(snapshot.headers) ? snapshot.headers.map((entry) => ({ ...entry })) : [];
@@ -911,6 +982,10 @@
     state.selectedEndpointId = null;
 
     persistEnv();
+    persistCategory();
+    refs.endpointSearch.value = "";
+    updateCategoryUI();
+    renderCatalog();
     refs.envSelect.value = state.env;
     refs.customBaseInput.hidden = state.env !== "custom";
     refs.customBaseInput.value = state.customBase;
@@ -1053,7 +1128,7 @@
       const response = await fetch(requestUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ institutional_email: email, password }),
         cache: "no-store"
       });
       const text = await response.text();
@@ -1235,6 +1310,9 @@
     refs.customBaseInput.addEventListener("input", handleCustomBaseInput);
     refs.endpointSearch.addEventListener("input", (event) => renderCatalog(event.target.value));
     refs.catalog.addEventListener("click", handleCatalogClick);
+    refs.categoryButtons.forEach((button) => {
+      button.addEventListener("click", () => setCategory(button.dataset.category));
+    });
 
     refs.methodSelect.addEventListener("change", (event) => {
       state.method = event.target.value;
@@ -1340,7 +1418,10 @@
       return;
     }
 
-    if (CATALOG[0]) expandedModules.add(CATALOG[0].id);
+    const categoryModules = CATALOG.filter((module) => module.category === state.category);
+    const defaultModule =
+      categoryModules.find((module) => module.module === "areas") || categoryModules[0] || CATALOG[0];
+    if (defaultModule) expandedModules.add(defaultModule.id);
     if (state.env === "custom" && !state.customBase) {
       state.customBase = ENV_BASES.test;
       persistEnv();
@@ -1353,6 +1434,7 @@
     refs.methodSelect.value = state.method;
     refs.pathInput.value = state.path;
 
+    updateCategoryUI();
     renderCatalog();
     renderKeyChips();
     updateCredentialStates();
@@ -1365,7 +1447,7 @@
     setRequestTab("headers");
     setResponseTab("json");
 
-    const firstEndpoint = CATALOG[0] && CATALOG[0].endpoints[0];
+    const firstEndpoint = defaultModule && defaultModule.endpoints[0];
     if (firstEndpoint) loadEndpoint(firstEndpoint.id);
   }
 

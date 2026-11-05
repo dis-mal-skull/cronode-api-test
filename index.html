@@ -60,6 +60,14 @@
           </div>
           <span class="badge-count" id="endpoint-count">0 endpoints</span>
         </div>
+        <div class="category-switch" id="category-switch" role="tablist" aria-label="Categoría de endpoints">
+          <button class="category-btn is-active" data-category="jwt" role="tab" aria-selected="true" type="button">
+            JWT <span class="category-count" id="jwt-count">0</span>
+          </button>
+          <button class="category-btn" data-category="apiKey" role="tab" aria-selected="false" type="button">
+            API Key <span class="category-count" id="api-key-count">0</span>
+          </button>
+        </div>
         <div class="search-wrap">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <input id="endpoint-search" class="input search-input" type="search" placeholder="Filtrar por nombre, método o ruta..." aria-label="Filtrar endpoints">
@@ -280,8 +288,8 @@
             <form id="login-form" class="login-form" novalidate>
               <div class="login-grid">
                 <label class="field">
-                  <span>Email</span>
-                  <input id="login-email" type="email" autocomplete="username" placeholder="instructor@senacpic.edu.co" required>
+                  <span>Email institucional</span>
+                  <input id="login-email" type="email" autocomplete="username" placeholder="usuario@sena.edu.co" required>
                 </label>
                 <label class="field">
                   <span>Password</span>

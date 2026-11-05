@@ -1,642 +1,1632 @@
-const JSON_HEADERS = [
-  { key: "Accept", value: "application/json" },
-  { key: "Content-Type", value: "application/json" }
-];
-
-const PLAIN_HEADERS = [{ key: "Accept", value: "application/json" }];
-
 const CRONODE_CATALOG = [
   {
-    id: "areas",
-    name: "Áreas",
-    short: "AR",
-    color: "#38bdf8",
-    endpoints: [
+    "id": "jwt-auth",
+    "module": "auth",
+    "category": "jwt",
+    "name": "Autenticación (Auth)",
+    "short": "AU",
+    "color": "#a3e635",
+    "endpoints": [
       {
-        id: "areas-list",
-        name: "Listar áreas",
-        method: "GET",
-        path: "/api/v1/areas",
-        description: "Obtiene el listado paginado de áreas de formación.",
-        headers: PLAIN_HEADERS,
-        query: [
-          { key: "limit", value: "10" },
-          { key: "offset", value: "0" },
-          { key: "search", value: "" }
+        "id": "jwt_auth_login",
+        "name": "Iniciar Sesión (Login)",
+        "method": "POST",
+        "path": "/api/v1/auth/authenticate",
+        "description": "Autentica un usuario y devuelve un token JWT.",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
         ],
-        body: null,
-        requiresAuth: true
-      },
-      {
-        id: "areas-detail",
-        name: "Consultar área",
-        method: "GET",
-        path: "/api/v1/areas/{id}",
-        description: "Obtiene el detalle de un área por su identificador.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
-      },
-      {
-        id: "areas-create",
-        name: "Crear área",
-        method: "POST",
-        path: "/api/v1/areas",
-        description: "Registra una nueva área de formación.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          nombre: "Área de Sistemas",
-          descripcion: "Área de formación en tecnologías de la información",
-          estado: "activa"
+        "query": [],
+        "body": {
+          "institutional_email": "usuario@sena.edu.co",
+          "password": "********"
         },
-        requiresAuth: true
+        "requiresAuth": false,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "areas-update",
-        name: "Actualizar área",
-        method: "PUT",
-        path: "/api/v1/areas/{id}",
-        description: "Actualiza los datos de un área existente.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          nombre: "Área de Sistemas Actualizada",
-          descripcion: "Descripción actualizada del área",
-          estado: "activa"
+        "id": "jwt_auth_authenticated",
+        "name": "Verificar Token Activo",
+        "method": "GET",
+        "path": "/api/v1/auth/authenticated",
+        "description": "Verifica la validez de la sesión autenticada.",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "institutional_email": "usuario@sena.edu.co",
+          "password": "********"
         },
-        requiresAuth: true
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "areas-delete",
-        name: "Eliminar área",
-        method: "DELETE",
-        path: "/api/v1/areas/{id}",
-        description: "Elimina un área por su identificador.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
+        "id": "jwt_auth_refresh",
+        "name": "Refrescar Token (Refresh Token)",
+        "method": "POST",
+        "path": "/api/v1/auth/refresh-token",
+        "description": "Genera un nuevo token a partir de un refresh token.",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        },
+        "requiresAuth": false,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       }
     ]
   },
   {
-    id: "ambientes",
-    name: "Ambientes",
-    short: "AM",
-    color: "#34d399",
-    endpoints: [
+    "id": "jwt-areas",
+    "module": "areas",
+    "category": "jwt",
+    "name": "Áreas",
+    "short": "AR",
+    "color": "#38bdf8",
+    "endpoints": [
       {
-        id: "ambientes-list",
-        name: "Listar ambientes",
-        method: "GET",
-        path: "/api/v1/ambientes",
-        description: "Obtiene el listado paginado de ambientes de formación.",
-        headers: PLAIN_HEADERS,
-        query: [
-          { key: "limit", value: "10" },
-          { key: "offset", value: "0" },
-          { key: "areaId", value: "" }
+        "id": "jwt_areas_getAll",
+        "name": "Obtener todas las áreas",
+        "method": "GET",
+        "path": "/api/v1/areas",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_areas_getOne",
+        "name": "Obtener área por ID",
+        "method": "GET",
+        "path": "/api/v1/areas/1",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_areas_create",
+        "name": "Crear nueva área",
+        "method": "POST",
+        "path": "/api/v1/areas",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
         ],
-        body: null,
-        requiresAuth: true
-      },
-      {
-        id: "ambientes-detail",
-        name: "Consultar ambiente",
-        method: "GET",
-        path: "/api/v1/ambientes/{id}",
-        description: "Obtiene el detalle de un ambiente por su identificador.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
-      },
-      {
-        id: "ambientes-create",
-        name: "Crear ambiente",
-        method: "POST",
-        path: "/api/v1/ambientes",
-        description: "Registra un nuevo ambiente de formación.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          nombre: "Ambiente 301",
-          capacidad: 30,
-          areaId: 1,
-          ubicacion: "Bloque B - Piso 3",
-          estado: "disponible"
+        "query": [],
+        "body": {
+          "name": "Recursos Humanos",
+          "observations": "Área de la empresa donde se manejan todos los procesos de recursos humanos"
         },
-        requiresAuth: true
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "ambientes-update",
-        name: "Actualizar ambiente",
-        method: "PUT",
-        path: "/api/v1/ambientes/{id}",
-        description: "Actualiza la información de un ambiente.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          nombre: "Ambiente 301 - Redes",
-          capacidad: 25,
-          areaId: 1,
-          ubicacion: "Bloque B - Piso 3",
-          estado: "disponible"
+        "id": "jwt_areas_update",
+        "name": "Actualizar área",
+        "method": "PUT",
+        "path": "/api/v1/areas/13",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "name": "Recursos Humanos editado",
+          "observations": "Área EDITADA de la empresa donde se manejan todos los procesos de recursos humanos"
         },
-        requiresAuth: true
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "ambientes-delete",
-        name: "Eliminar ambiente",
-        method: "DELETE",
-        path: "/api/v1/ambientes/{id}",
-        description: "Elimina un ambiente por su identificador.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
+        "id": "jwt_areas_delete",
+        "name": "Eliminar área",
+        "method": "DELETE",
+        "path": "/api/v1/areas/12",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       }
     ]
   },
   {
-    id: "fichas",
-    name: "Fichas",
-    short: "FI",
-    color: "#fbbf24",
-    endpoints: [
+    "id": "jwt-apprentices",
+    "module": "apprentices",
+    "category": "jwt",
+    "name": "Aprendices",
+    "short": "AP",
+    "color": "#34d399",
+    "endpoints": [
       {
-        id: "fichas-list",
-        name: "Listar fichas",
-        method: "GET",
-        path: "/api/v1/fichas",
-        description: "Obtiene las fichas de caracterización registradas.",
-        headers: PLAIN_HEADERS,
-        query: [
-          { key: "limit", value: "10" },
-          { key: "offset", value: "0" },
-          { key: "estado", value: "activa" }
+        "id": "jwt_appr_getAll",
+        "name": "Obtener todos los aprendices",
+        "method": "GET",
+        "path": "/api/v1/apprentices",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_appr_getOne",
+        "name": "Obtener aprendiz por ID",
+        "method": "GET",
+        "path": "/api/v1/apprentices/23",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_appr_byCodeTab",
+        "name": "Aprendices por Ficha (codeTab)",
+        "method": "GET",
+        "path": "/api/v1/apprentices/apprenticesByCodeTab/2873707",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_appr_create",
+        "name": "Crear aprendiz",
+        "method": "POST",
+        "path": "/api/v1/apprentices",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
         ],
-        body: null,
-        requiresAuth: true
-      },
-      {
-        id: "fichas-detail",
-        name: "Consultar ficha",
-        method: "GET",
-        path: "/api/v1/fichas/{id}",
-        description: "Obtiene el detalle de una ficha por su identificador.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
-      },
-      {
-        id: "fichas-create",
-        name: "Crear ficha",
-        method: "POST",
-        path: "/api/v1/fichas",
-        description: "Registra una nueva ficha de formación.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          codigo: "2671234",
-          programa: "Análisis y Desarrollo de Software",
-          fechaInicio: "2026-01-20",
-          fechaFin: "2026-12-15",
-          estado: "activa"
+        "query": [],
+        "body": {
+          "document_type": "CC",
+          "document": "0000000000",
+          "name": "Julian David",
+          "surnames": "Marulanda Leon",
+          "phone": "3000000000",
+          "rh": "A+",
+          "email": "usuario@sena.edu.co",
+          "institutional_email": "usuario@sena.edu.co",
+          "state": "CANCELADO",
+          "codeTab": "2873707",
+          "birthdate": "2000-05-15",
+          "birthplace": "Manizales",
+          "address": "Calle 65 # 23-10",
+          "city": "Manizales",
+          "instructor_followup_name": "Adriana Rodriguez Morales"
         },
-        requiresAuth: true
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "fichas-update",
-        name: "Actualizar ficha",
-        method: "PUT",
-        path: "/api/v1/fichas/{id}",
-        description: "Actualiza la información de una ficha.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          codigo: "2671234",
-          programa: "Análisis y Desarrollo de Software",
-          fechaInicio: "2026-01-20",
-          fechaFin: "2026-12-20",
-          estado: "activa"
+        "id": "jwt_appr_update",
+        "name": "Actualizar aprendiz",
+        "method": "PUT",
+        "path": "/api/v1/apprentices/23",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "document_type": "CC",
+          "document": "0000000000",
+          "name": "Julian David Actualizado",
+          "surnames": "Marulanda Leon",
+          "phone": "3000000000",
+          "rh": "A+",
+          "email": "usuario@sena.edu.co",
+          "institutional_email": "usuario@sena.edu.co",
+          "state": "CANCELADO",
+          "codeTab": "2873707",
+          "birthdate": "2000-05-15",
+          "birthplace": "Manizales",
+          "address": "Calle 65 # 23-10",
+          "city": "Manizales",
+          "instructor_followup_name": "Adriana Rodriguez Morales"
         },
-        requiresAuth: true
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "fichas-delete",
-        name: "Eliminar ficha",
-        method: "DELETE",
-        path: "/api/v1/fichas/{id}",
-        description: "Elimina una ficha por su identificador.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
+        "id": "jwt_appr_delete",
+        "name": "Eliminar aprendiz",
+        "method": "DELETE",
+        "path": "/api/v1/apprentices/4",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       }
     ]
   },
   {
-    id: "instructores",
-    name: "Instructores",
-    short: "IN",
-    color: "#a78bfa",
-    endpoints: [
+    "id": "jwt-ambients",
+    "module": "ambients",
+    "category": "jwt",
+    "name": "Ambientes de Formación",
+    "short": "AM",
+    "color": "#22d3ee",
+    "endpoints": [
       {
-        id: "instructores-list",
-        name: "Listar instructores",
-        method: "GET",
-        path: "/api/v1/instructores",
-        description: "Obtiene el listado paginado de instructores.",
-        headers: PLAIN_HEADERS,
-        query: [
-          { key: "limit", value: "10" },
-          { key: "offset", value: "0" },
-          { key: "search", value: "" }
+        "id": "jwt_amb_getAll",
+        "name": "Obtener todos los ambientes",
+        "method": "GET",
+        "path": "/api/v1/ambients",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_amb_getOne",
+        "name": "Obtener ambiente por ID",
+        "method": "GET",
+        "path": "/api/v1/ambients/1",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_amb_schedule",
+        "name": "Horario del ambiente (ambientSchedule)",
+        "method": "GET",
+        "path": "/api/v1/ambients/ambientSchedule/1",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_amb_create",
+        "name": "Crear ambiente",
+        "method": "POST",
+        "path": "/api/v1/ambients",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
         ],
-        body: null,
-        requiresAuth: true
-      },
-      {
-        id: "instructores-detail",
-        name: "Consultar instructor",
-        method: "GET",
-        path: "/api/v1/instructores/{id}",
-        description: "Obtiene el detalle de un instructor.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
-      },
-      {
-        id: "instructores-create",
-        name: "Crear instructor",
-        method: "POST",
-        path: "/api/v1/instructores",
-        description: "Registra un nuevo instructor.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          nombre: "Julian Salazar Pineda",
-          documento: "1020304050",
-          email: "Jsalazar@sena.edu.co",
-          telefono: "3001234567",
-          areaId: 1
+        "query": [],
+        "body": {
+          "name": "Auditorio Milton Gaviria",
+          "state": "En reparacion",
+          "usability": "Auditorio principal de la regional Caldas para los eventos internos de la regional"
         },
-        requiresAuth: true
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "instructores-update",
-        name: "Actualizar instructor",
-        method: "PUT",
-        path: "/api/v1/instructores/{id}",
-        description: "Actualiza la información de un instructor.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          nombre: "Julian Salazar Pineda",
-          documento: "1020304050",
-          email: "Jsalazar@sena.edu.co",
-          telefono: "3007654321",
-          areaId: 1
+        "id": "jwt_amb_update",
+        "name": "Actualizar ambiente",
+        "method": "PUT",
+        "path": "/api/v1/ambients/34",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "name": "Auditorio Milton Gaviria editados",
+          "state": "Activo",
+          "usability": "Auditorio principal de la regional Caldas para los eventos internos de la regional"
         },
-        requiresAuth: true
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "instructores-delete",
-        name: "Eliminar instructor",
-        method: "DELETE",
-        path: "/api/v1/instructores/{id}",
-        description: "Elimina un instructor por su identificador.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
+        "id": "jwt_amb_delete",
+        "name": "Eliminar ambiente",
+        "method": "DELETE",
+        "path": "/api/v1/ambients/34",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       }
     ]
   },
   {
-    id: "competencias",
-    name: "Competencias",
-    short: "CO",
-    color: "#f472b6",
-    endpoints: [
+    "id": "jwt-groups",
+    "module": "groups",
+    "category": "jwt",
+    "name": "Grupos (Fichas)",
+    "short": "GR",
+    "color": "#fbbf24",
+    "endpoints": [
       {
-        id: "competencias-list",
-        name: "Listar competencias",
-        method: "GET",
-        path: "/api/v1/competencias",
-        description: "Obtiene las competencias asociadas a una ficha.",
-        headers: PLAIN_HEADERS,
-        query: [
-          { key: "limit", value: "10" },
-          { key: "offset", value: "0" },
-          { key: "fichaId", value: "" }
+        "id": "jwt_grp_getAll",
+        "name": "Obtener todos los grupos",
+        "method": "GET",
+        "path": "/api/v1/groups",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_grp_active",
+        "name": "Grupos activos (getAllActiveGroups)",
+        "method": "GET",
+        "path": "/api/v1/groups/activeGroups",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_grp_paginated",
+        "name": "Grupos activos paginados",
+        "method": "GET",
+        "path": "/api/v1/groups/activeGroupsPaginated",
+        "description": "",
+        "headers": [],
+        "query": [
+          {
+            "key": "startIndex",
+            "value": "0"
+          },
+          {
+            "key": "quantity",
+            "value": "4"
+          }
         ],
-        body: null,
-        requiresAuth: true
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "competencias-detail",
-        name: "Consultar competencia",
-        method: "GET",
-        path: "/api/v1/competencias/{id}",
-        description: "Obtiene el detalle de una competencia laboral.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
+        "id": "jwt_grp_byInstructor",
+        "name": "Grupos activos por instructor",
+        "method": "GET",
+        "path": "/api/v1/groups/activeGroupsByInstructor/38",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "competencias-create",
-        name: "Crear competencia",
-        method: "POST",
-        path: "/api/v1/competencias",
-        description: "Registra una competencia dentro de una ficha.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          codigo: "220501046",
-          nombre: "Construir aplicaciones de software",
-          fichaId: 1,
-          horas: 880
+        "id": "jwt_grp_getOne",
+        "name": "Obtener grupo por ID",
+        "method": "GET",
+        "path": "/api/v1/groups/12",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_grp_byCodeTab",
+        "name": "Grupo por Número de Ficha (codeTab)",
+        "method": "GET",
+        "path": "/api/v1/groups/groupByCodeTab/2996183",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_grp_mobile",
+        "name": "Grupo versión móvil (groupMobile)",
+        "method": "GET",
+        "path": "/api/v1/groups/groupMobile/2873707",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_grp_exportExcel",
+        "name": "Exportar programación a Excel",
+        "method": "GET",
+        "path": "/api/v1/groups/exportExcel/2847473/2025-12-01/2025-12-07",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_grp_create",
+        "name": "Crear grupo",
+        "method": "POST",
+        "path": "/api/v1/groups",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "codeTab": "9090909",
+          "ModalityId": 1,
+          "quantityLearners": 26,
+          "activeLearners": 13,
+          "electiveStartDate": "2024-01-22",
+          "electiveEndDate": "2025-10-21",
+          "practiceStartDate": "2025-10-22",
+          "practiceEndDate": "2026-04-21",
+          "offer": "Abierta",
+          "ManagerId": 25,
+          "FormationProgramId": 31,
+          "groupState": "formación"
         },
-        requiresAuth: true
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "competencias-delete",
-        name: "Eliminar competencia",
-        method: "DELETE",
-        path: "/api/v1/competencias/{id}",
-        description: "Elimina una competencia por su identificador.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
+        "id": "jwt_grp_update",
+        "name": "Actualizar grupo",
+        "method": "PUT",
+        "path": "/api/v1/groups/52",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "codeTab": "8080808",
+          "ModalityId": 1,
+          "quantityLearners": 26,
+          "activeLearners": 13,
+          "groupState": "formación"
+        },
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_grp_delete",
+        "name": "Eliminar grupo",
+        "method": "DELETE",
+        "path": "/api/v1/groups/52",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       }
     ]
   },
   {
-    id: "resultados",
-    name: "Resultados de Aprendizaje",
-    short: "RA",
-    color: "#60a5fa",
-    endpoints: [
+    "id": "jwt-users",
+    "module": "users",
+    "category": "jwt",
+    "name": "Usuarios e Instructores",
+    "short": "US",
+    "color": "#a78bfa",
+    "endpoints": [
       {
-        id: "resultados-list",
-        name: "Listar resultados",
-        method: "GET",
-        path: "/api/v1/resultados-aprendizaje",
-        description: "Obtiene los resultados de aprendizaje por competencia.",
-        headers: PLAIN_HEADERS,
-        query: [
-          { key: "limit", value: "10" },
-          { key: "offset", value: "0" },
-          { key: "competenciaId", value: "" }
+        "id": "jwt_usr_getAll",
+        "name": "Obtener todos los usuarios",
+        "method": "GET",
+        "path": "/api/v1/users",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_usr_getOne",
+        "name": "Obtener usuario por ID",
+        "method": "GET",
+        "path": "/api/v1/users/1",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_usr_instructors",
+        "name": "Instructores activos",
+        "method": "GET",
+        "path": "/api/v1/users/instructors/activeInstructors",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_usr_learners",
+        "name": "Aprendices activos (usuarios)",
+        "method": "GET",
+        "path": "/api/v1/users/learners/activeLearners",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_usr_schedule",
+        "name": "Horario de usuario (userSchedule)",
+        "method": "GET",
+        "path": "/api/v1/users/userSchedule/25",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_usr_exportExcel",
+        "name": "Exportar horario de usuario a Excel",
+        "method": "GET",
+        "path": "/api/v1/users/exportExcel/38/2025-04-29/2025-09-29",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_usr_validateHours",
+        "name": "Validar horas diarias de instructor",
+        "method": "GET",
+        "path": "/api/v1/schedules/validate-instructor-hours",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
         ],
-        body: null,
-        requiresAuth: true
-      },
-      {
-        id: "resultados-create",
-        name: "Crear resultado",
-        method: "POST",
-        path: "/api/v1/resultados-aprendizaje",
-        description: "Registra un resultado de aprendizaje.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          codigo: "220501046-01",
-          descripcion: "Diseñar la interfaz de usuario del sistema",
-          competenciaId: 1
+        "query": [],
+        "body": {
+          "ConstantUserId": 27,
+          "day": [
+            1
+          ],
+          "startDate": "",
+          "endDate": ""
         },
-        requiresAuth: true
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "resultados-update",
-        name: "Actualizar resultado",
-        method: "PUT",
-        path: "/api/v1/resultados-aprendizaje/{id}",
-        description: "Actualiza un resultado de aprendizaje.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          codigo: "220501046-01",
-          descripcion: "Diseñar y validar la interfaz de usuario",
-          competenciaId: 1
+        "id": "jwt_usr_create",
+        "name": "Crear usuario",
+        "method": "POST",
+        "path": "/api/v1/users",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "username": "Instructor Prueba",
+          "institutional_email": "usuario@sena.edu.co",
+          "personal_email": "usuario@example.com",
+          "document": "0000000000",
+          "birthdate": "1990-05-15",
+          "phone": "3000000000",
+          "gender": "M",
+          "PositionId": 4,
+          "RolId": 2,
+          "ContractTypeId": 3,
+          "state": "Activo"
         },
-        requiresAuth: true
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "resultados-delete",
-        name: "Eliminar resultado",
-        method: "DELETE",
-        path: "/api/v1/resultados-aprendizaje/{id}",
-        description: "Elimina un resultado de aprendizaje.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
+        "id": "jwt_usr_changePass",
+        "name": "Cambiar contraseña de usuario",
+        "method": "PUT",
+        "path": "/api/v1/users/changePassword/107",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "password": "********"
+        },
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_usr_delete",
+        "name": "Eliminar usuario",
+        "method": "DELETE",
+        "path": "/api/v1/users/107",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       }
     ]
   },
   {
-    id: "asignaciones",
-    name: "Asignaciones",
-    short: "AS",
-    color: "#fb923c",
-    endpoints: [
+    "id": "jwt-schedules",
+    "module": "schedules",
+    "category": "jwt",
+    "name": "Horarios (Schedules)",
+    "short": "SC",
+    "color": "#fb923c",
+    "endpoints": [
       {
-        id: "asignaciones-list",
-        name: "Listar asignaciones",
-        method: "GET",
-        path: "/api/v1/asignaciones",
-        description: "Consulta las asignaciones de instructores y ambientes.",
-        headers: PLAIN_HEADERS,
-        query: [
-          { key: "limit", value: "10" },
-          { key: "offset", value: "0" },
-          { key: "instructorId", value: "" },
-          { key: "fichaId", value: "" }
+        "id": "jwt_sch_getAll",
+        "name": "Obtener todos los horarios",
+        "method": "GET",
+        "path": "/api/v1/schedules",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_sch_getOne",
+        "name": "Obtener horario por ID",
+        "method": "GET",
+        "path": "/api/v1/schedules/1",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_sch_create",
+        "name": "Crear franja de horario",
+        "method": "POST",
+        "path": "/api/v1/schedules",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
         ],
-        body: null,
-        requiresAuth: true
-      },
-      {
-        id: "asignaciones-create",
-        name: "Crear asignación",
-        method: "POST",
-        path: "/api/v1/asignaciones",
-        description: "Asigna un instructor a una ficha, competencia y ambiente.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          instructorId: 1,
-          fichaId: 1,
-          competenciaId: 1,
-          ambienteId: 1,
-          fecha: "2026-02-10",
-          horaInicio: "07:00",
-          horaFin: "12:00"
+        "query": [],
+        "body": {
+          "codeTab": "2873707",
+          "color": "RED",
+          "type": "PRUEBA",
+          "state": "true",
+          "day": 1,
+          "startDate": "2025-04-29T05:00:00.000Z",
+          "endDate": "2025-07-12T05:00:00.000Z",
+          "summary": "PRUEBA",
+          "AmbientId": 1,
+          "ProgramationId": 1,
+          "ConstantUserId": 1,
+          "TemporaryUserId": 1,
+          "LearningResultIds": 1
         },
-        requiresAuth: true
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "asignaciones-update",
-        name: "Actualizar asignación",
-        method: "PATCH",
-        path: "/api/v1/asignaciones/{id}",
-        description: "Actualiza parcialmente una asignación existente.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          estado: "confirmada",
-          observaciones: "Asignación validada por coordinación"
-        },
-        requiresAuth: true
+        "id": "jwt_sch_updateState",
+        "name": "Actualizar estado del horario",
+        "method": "PUT",
+        "path": "/api/v1/schedules/state/1",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "asignaciones-delete",
-        name: "Eliminar asignación",
-        method: "DELETE",
-        path: "/api/v1/asignaciones/{id}",
-        description: "Elimina una asignación por su identificador.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
+        "id": "jwt_sch_delete",
+        "name": "Eliminar horario",
+        "method": "DELETE",
+        "path": "/api/v1/schedules/1",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       }
     ]
   },
   {
-    id: "auth",
-    name: "Auth",
-    short: "AU",
-    color: "#a3e635",
-    endpoints: [
+    "id": "jwt-competences",
+    "module": "competences",
+    "category": "jwt",
+    "name": "Competencias",
+    "short": "CO",
+    "color": "#f472b6",
+    "endpoints": [
       {
-        id: "auth-authenticate",
-        name: "Iniciar sesión",
-        method: "POST",
-        path: "/api/v1/auth/authenticate",
-        description: "Autentica un usuario y devuelve el JWT de acceso.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          email: "instructor@senacpic.edu.co",
-          password: "Sena2026*"
+        "id": "jwt_comp_getAll",
+        "name": "Obtener todas las competencias",
+        "method": "GET",
+        "path": "/api/v1/competences",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_comp_getOne",
+        "name": "Obtener competencia por ID",
+        "method": "GET",
+        "path": "/api/v1/competences/502",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_comp_byProgram",
+        "name": "Competencias por programa",
+        "method": "GET",
+        "path": "/api/v1/competences/competencesByProgram/34",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_comp_create",
+        "name": "Crear competencia",
+        "method": "POST",
+        "path": "/api/v1/competences",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "FormationProgramId": 34,
+          "code": "909090909",
+          "description": "PRUEBA",
+          "summary": "PRUEBA",
+          "hours": 900
         },
-        requiresAuth: false
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "auth-register",
-        name: "Registrar usuario",
-        method: "POST",
-        path: "/api/v1/auth/register",
-        description: "Registra un nuevo usuario en el sistema.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          email: "nuevo.instructor@senacpic.edu.co",
-          password: "Sena2026*",
-          nombre: "Nuevo Instructor",
-          rol: "instructor"
-        },
-        requiresAuth: false
-      },
-      {
-        id: "auth-me",
-        name: "Perfil autenticado",
-        method: "GET",
-        path: "/api/v1/auth/me",
-        description: "Devuelve la información del usuario autenticado.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
-      },
-      {
-        id: "auth-refresh",
-        name: "Refrescar token",
-        method: "POST",
-        path: "/api/v1/auth/refresh",
-        description: "Genera un nuevo access token usando el refresh token.",
-        headers: JSON_HEADERS,
-        query: [],
-        body: {
-          refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-        },
-        requiresAuth: false
-      },
-      {
-        id: "auth-logout",
-        name: "Cerrar sesión",
-        method: "POST",
-        path: "/api/v1/auth/logout",
-        description: "Invalida la sesión y el token actual.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
+        "id": "jwt_comp_delete",
+        "name": "Eliminar competencia",
+        "method": "DELETE",
+        "path": "/api/v1/competences/603",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       }
     ]
   },
   {
-    id: "archivos",
-    name: "Archivos / Uploads",
-    short: "FI",
-    color: "#22d3ee",
-    endpoints: [
+    "id": "jwt-learningResults",
+    "module": "learningResults",
+    "category": "jwt",
+    "name": "Resultados de Aprendizaje",
+    "short": "RA",
+    "color": "#60a5fa",
+    "endpoints": [
       {
-        id: "archivos-list",
-        name: "Listar archivos",
-        method: "GET",
-        path: "/api/v1/archivos",
-        description: "Obtiene el listado de archivos cargados al sistema.",
-        headers: PLAIN_HEADERS,
-        query: [
-          { key: "limit", value: "10" },
-          { key: "offset", value: "0" }
+        "id": "jwt_rap_getAll",
+        "name": "Obtener todos los resultados",
+        "method": "GET",
+        "path": "/api/v1/learningResults",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_rap_getOne",
+        "name": "Obtener resultado por ID",
+        "method": "GET",
+        "path": "/api/v1/learningResults/1624",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_rap_byCompetence",
+        "name": "Resultados por competencia",
+        "method": "GET",
+        "path": "/api/v1/learningResults/learningResultsByCompetence/327",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_rap_create",
+        "name": "Crear resultado de aprendizaje",
+        "method": "POST",
+        "path": "/api/v1/learningResults",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
         ],
-        body: null,
-        requiresAuth: true
+        "query": [],
+        "body": {
+          "code": "909090909",
+          "summary": "PRUEBA",
+          "description": "PRUEBA",
+          "hours": null,
+          "projectPhase": "",
+          "CompetenceId": 327
+        },
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "archivos-upload",
-        name: "Subir archivo",
-        method: "POST",
-        path: "/api/v1/archivos/upload",
-        description: "Carga un archivo mediante multipart/form-data.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        bodyType: "multipart",
-        requiresAuth: true
+        "id": "jwt_rap_delete",
+        "name": "Eliminar resultado",
+        "method": "DELETE",
+        "path": "/api/v1/learningResults/2975",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      }
+    ]
+  },
+  {
+    "id": "jwt-formationPrograms",
+    "module": "formationPrograms",
+    "category": "jwt",
+    "name": "Programas de Formación",
+    "short": "PF",
+    "color": "#c084fc",
+    "endpoints": [
+      {
+        "id": "jwt_fp_getAll",
+        "name": "Obtener todos los programas",
+        "method": "GET",
+        "path": "/api/v1/formationPrograms",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "archivos-detail",
-        name: "Consultar archivo",
-        method: "GET",
-        path: "/api/v1/archivos/{id}",
-        description: "Obtiene los metadatos de un archivo cargado.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
+        "id": "jwt_fp_getOne",
+        "name": "Obtener programa por ID",
+        "method": "GET",
+        "path": "/api/v1/formationPrograms/31",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
       },
       {
-        id: "archivos-delete",
-        name: "Eliminar archivo",
-        method: "DELETE",
-        path: "/api/v1/archivos/{id}",
-        description: "Elimina un archivo por su identificador.",
-        headers: PLAIN_HEADERS,
-        query: [],
-        body: null,
-        requiresAuth: true
+        "id": "jwt_fp_create",
+        "name": "Crear programa de formación",
+        "method": "POST",
+        "path": "/api/v1/formationPrograms",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "code": "909090 V1",
+          "name": "PRUEBA - 909090 V1",
+          "FormationTypeId": 1,
+          "occupationalProfile": ""
+        },
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_fp_profile",
+        "name": "Actualizar perfil ocupacional",
+        "method": "PUT",
+        "path": "/api/v1/formationPrograms/updateOccupationalProfile/1",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "occupationalProfile": "Perfil ocupacional de prueba para el programa de MANEJO DE MAQUINARIA..."
+        },
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_fp_delete",
+        "name": "Eliminar programa",
+        "method": "DELETE",
+        "path": "/api/v1/formationPrograms/43",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      }
+    ]
+  },
+  {
+    "id": "jwt-contracts",
+    "module": "contracts",
+    "category": "jwt",
+    "name": "Contratos y Tipos",
+    "short": "CT",
+    "color": "#4ade80",
+    "endpoints": [
+      {
+        "id": "jwt_cnt_getAll",
+        "name": "Obtener contratos",
+        "method": "GET",
+        "path": "/api/v1/contracts",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_cnt_types",
+        "name": "Tipos de contratos (contractTypes)",
+        "method": "GET",
+        "path": "/api/v1/contractTypes",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_cnt_create",
+        "name": "Crear contrato",
+        "method": "POST",
+        "path": "/api/v1/contracts",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "name": "PRUEBA",
+          "description": "PRUEBA",
+          "UserId": 1,
+          "startDate": "2025-04-29T05:00:00.000Z",
+          "endDate": "2025-09-29T05:00:00.000Z"
+        },
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      }
+    ]
+  },
+  {
+    "id": "jwt-trimesters",
+    "module": "trimesters",
+    "category": "jwt",
+    "name": "Trimestres",
+    "short": "TR",
+    "color": "#facc15",
+    "endpoints": [
+      {
+        "id": "jwt_tri_getAll",
+        "name": "Obtener todos los trimestres",
+        "method": "GET",
+        "path": "/api/v1/trimesters",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_tri_active",
+        "name": "Trimestre activo actual",
+        "method": "GET",
+        "path": "/api/v1/trimesters/trimester/activetrimester",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_tri_create",
+        "name": "Crear trimestre",
+        "method": "POST",
+        "path": "/api/v1/trimesters",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "name": "PRUEBA",
+          "year": "2025",
+          "state": "Activo",
+          "startDate": "2025-02-10T05:00:00.000Z",
+          "endDate": "2025-04-25T05:00:00.000Z"
+        },
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      }
+    ]
+  },
+  {
+    "id": "jwt-reportings",
+    "module": "reportings",
+    "category": "jwt",
+    "name": "Reportes y Estadísticas",
+    "short": "RP",
+    "color": "#f87171",
+    "endpoints": [
+      {
+        "id": "jwt_rep_modality",
+        "name": "Grupos por modalidad",
+        "method": "GET",
+        "path": "/api/v1/reportings/groupsModality",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_rep_modDetails",
+        "name": "Detalle de grupos por modalidad",
+        "method": "GET",
+        "path": "/api/v1/reportings/groupsModalityDetails",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_rep_lastTerm",
+        "name": "Grupos en último trimestre",
+        "method": "GET",
+        "path": "/api/v1/reportings/groupsInLastTerm",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_rep_firstTerm",
+        "name": "Grupos en primer trimestre",
+        "method": "GET",
+        "path": "/api/v1/reportings/groupsInFirstTerm",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_rep_practice",
+        "name": "Grupos en etapa productiva",
+        "method": "GET",
+        "path": "/api/v1/reportings/groupsInPractice",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      }
+    ]
+  },
+  {
+    "id": "jwt-geography",
+    "module": "geography",
+    "category": "jwt",
+    "name": "Geografía y Sedes (Zonas y Municipios)",
+    "short": "GE",
+    "color": "#2dd4bf",
+    "endpoints": [
+      {
+        "id": "jwt_geo_zones",
+        "name": "Obtener zonas",
+        "method": "GET",
+        "path": "/api/v1/zones",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_geo_municipalities",
+        "name": "Obtener municipios",
+        "method": "GET",
+        "path": "/api/v1/municipalities",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_geo_modalities",
+        "name": "Obtener modalidades",
+        "method": "GET",
+        "path": "/api/v1/modalities",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      },
+      {
+        "id": "jwt_geo_userZones",
+        "name": "Zonas por usuario (userZones)",
+        "method": "GET",
+        "path": "/api/v1/userZones",
+        "description": "",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": null,
+        "defaultApiKey": null
+      }
+    ]
+  },
+  {
+    "id": "apiKey-ambients",
+    "module": "ambients",
+    "category": "apiKey",
+    "name": "Ambientes (Servicios Externos)",
+    "short": "AM",
+    "color": "#22d3ee",
+    "endpoints": [
+      {
+        "id": "key_amb_getAll",
+        "name": "Consultar todos los ambientes",
+        "method": "GET",
+        "path": "/api/v1/ambients",
+        "description": "Consulta externa de ambientes usando API Key maestra.",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "6df3418530dd69237774158c434a7995725e84b0cbbed8e8f4d6d036d2502ffc"
+      },
+      {
+        "id": "key_amb_getOne",
+        "name": "Consultar ambiente por ID",
+        "method": "GET",
+        "path": "/api/v1/ambients/10",
+        "description": "Consulta estado de un ambiente específico.",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "ak_live_face_84762rt3"
+      },
+      {
+        "id": "key_amb_updateOccupied",
+        "name": "Actualizar ocupación (isOccupied)",
+        "method": "PUT",
+        "path": "/api/v1/ambients/isOccupied/10",
+        "description": "Actualización en tiempo real de ocupación desde sensores/reconocimiento facial.",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "isOccupied": true
+        },
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "ak_live_face_84762rt3"
+      },
+      {
+        "id": "key_amb_schedule",
+        "name": "Consultar horario del ambiente",
+        "method": "GET",
+        "path": "/api/v1/ambients/ambientSchedule/10",
+        "description": "Horario para pantallas informativas y tablets de acceso a ambientes.",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "ak_live_face_84762rt3"
+      }
+    ]
+  },
+  {
+    "id": "apiKey-apprentices",
+    "module": "apprentices",
+    "category": "apiKey",
+    "name": "Aprendices (Servicios Externos)",
+    "short": "AP",
+    "color": "#34d399",
+    "endpoints": [
+      {
+        "id": "key_appr_getAll",
+        "name": "Consultar todos los aprendices",
+        "method": "GET",
+        "path": "/api/v1/apprentices",
+        "description": "Listado general de aprendices para sincronización externa.",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "6df3418530dd69237774158c434a7995725e84b0cbbed8e8f4d6d036d2502ffc"
+      },
+      {
+        "id": "key_appr_byDoc",
+        "name": "Consultar aprendiz por Documento",
+        "method": "GET",
+        "path": "/api/v1/apprentices/document/1234",
+        "description": "Búsqueda por número de documento para control de acceso/asistencia.",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "ak_live_autodoc_98234xz1"
+      },
+      {
+        "id": "key_appr_byCodeTab",
+        "name": "Consultar aprendices por Ficha",
+        "method": "GET",
+        "path": "/api/v1/apprentices/apprenticesByCodeTab/2873707",
+        "description": "Lista de aprendices de una ficha para aplicaciones móviles.",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "ak_live_autodoc_98234xz1"
+      },
+      {
+        "id": "key_appr_update",
+        "name": "Actualizar datos de aprendiz",
+        "method": "PUT",
+        "path": "/api/v1/apprentices/23",
+        "description": "Actualización de datos desde plataformas de registro externas.",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "document_type": "CC",
+          "document": "0000000000",
+          "name": "Julian David Actualizado",
+          "surnames": "Marulanda Leon",
+          "phone": "3000000000",
+          "rh": "A+",
+          "email": "usuario@sena.edu.co",
+          "institutional_email": "usuario@sena.edu.co",
+          "state": "CANCELADO",
+          "codeTab": "2873707"
+        },
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "ak_live_autodoc_98234xz1"
+      }
+    ]
+  },
+  {
+    "id": "apiKey-groups",
+    "module": "groups",
+    "category": "apiKey",
+    "name": "Grupos / Fichas (Servicios Externos)",
+    "short": "GR",
+    "color": "#fbbf24",
+    "endpoints": [
+      {
+        "id": "key_grp_getAll",
+        "name": "Consultar todos los grupos",
+        "method": "GET",
+        "path": "/api/v1/groups",
+        "description": "Sincronización de fichas activas con sistemas externos.",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "ak_live_autodoc_98234xz1"
+      },
+      {
+        "id": "key_grp_byCodeTab",
+        "name": "Consultar grupo por Ficha (codeTab)",
+        "method": "GET",
+        "path": "/api/v1/groups/groupByCodeTab/12345",
+        "description": "Consulta rápida de ficha desde terminales o apps de instructores.",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "ak_live_autodoc_98234xz1"
+      }
+    ]
+  },
+  {
+    "id": "apiKey-users",
+    "module": "users",
+    "category": "apiKey",
+    "name": "Instructores (Servicios Externos)",
+    "short": "US",
+    "color": "#a78bfa",
+    "endpoints": [
+      {
+        "id": "key_usr_instructors",
+        "name": "Consultar instructores activos",
+        "method": "GET",
+        "path": "/api/v1/users/instructors/activeInstructors",
+        "description": "Directorio de instructores activos para sistemas biométricos.",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "6df3418530dd69237774158c434a7995725e84b0cbbed8e8f4d6d036d2502ffc"
+      }
+    ]
+  },
+  {
+    "id": "apiKey-formationPrograms",
+    "module": "formationPrograms",
+    "category": "apiKey",
+    "name": "Programas de Formación (Servicios Externos)",
+    "short": "PF",
+    "color": "#c084fc",
+    "endpoints": [
+      {
+        "id": "key_fp_getAll",
+        "name": "Consultar programas de formación",
+        "method": "GET",
+        "path": "/api/v1/formationPrograms",
+        "description": "Consulta de ofertas y programas de formación.",
+        "headers": [],
+        "query": [],
+        "body": null,
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "ak_live_autodoc_98234xz1"
+      },
+      {
+        "id": "key_fp_updateProfile",
+        "name": "Actualizar perfil ocupacional",
+        "method": "PUT",
+        "path": "/api/v1/formationPrograms/updateOccupationalProfile/1",
+        "description": "",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "query": [],
+        "body": {
+          "occupationalProfile": "Perfil ocupacional de prueba para el programa de MANEJO DE MAQUINARIA..."
+        },
+        "requiresAuth": true,
+        "authHeaderKey": "x-api-key",
+        "defaultApiKey": "ak_live_autodoc_98234xz1"
       }
     ]
   }

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cliente web para pruebas del API de CRONODE - CPIC Caldas">
+  <title>CRONODE API Test · CPIC Caldas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">CR</div>
+        <div class="brand-copy">
+          <div class="brand-title-row">
+            <h1>CRONODE API Test</h1>
+            <span class="brand-tag"><i class="tag-dot"></i>CPIC CALDAS</span>
+          </div>
+          <p class="brand-desc">Cliente web para pruebas del API de CRONODE</p>
+        </div>
+      </div>
+
+      <div class="header-tools">
+        <div class="env-control">
+          <label for="env-select" class="control-label">Entorno</label>
+          <div class="env-control-row">
+            <select id="env-select" class="select env-select">
+              <option value="test">Servidor Pruebas</option>
+              <option value="local">Local: 3000</option>
+              <option value="custom">⚙️ Personalizado...</option>
+            </select>
+            <input id="custom-base-url" class="input custom-base-input" type="text" spellcheck="false" placeholder="https://tu-api.com" aria-label="URL base personalizada" hidden>
+          </div>
+        </div>
+
+        <div class="header-buttons">
+          <button class="btn btn-ghost" id="btn-credentials" type="button">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 2l-2 2m-7.6 7.6a5 5 0 1 1-7.1 7.1 5 5 0 0 1 7.1-7.1Zm0 0L15.5 8m0 0 3 3m-3-3-3-3"/></svg>
+            <span>Credenciales</span>
+          </button>
+          <button class="btn btn-ghost" id="btn-history" type="button">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
+            <span>Historial</span>
+            <span class="pill" id="history-count">0</span>
+          </button>
+          <button class="icon-btn" id="btn-credits" type="button" aria-label="Créditos del desarrollador" title="Créditos del desarrollador">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="panel sidebar" aria-label="Catálogo de endpoints">
+        <div class="sidebar-head">
+          <div>
+            <h2>Catálogo Cronode</h2>
+            <p>Explora y carga endpoints</p>
+          </div>
+          <span class="badge-count" id="endpoint-count">0 endpoints</span>
+        </div>
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="endpoint-search" class="input search-input" type="search" placeholder="Filtrar por nombre, método o ruta..." aria-label="Filtrar endpoints">
+        </div>
+        <div class="catalog" id="catalog"></div>
+        <div class="catalog-empty" id="catalog-empty" hidden>
+          <p>No se encontraron endpoints.</p>
+          <small>Prueba con otro nombre, método o ruta.</small>
+        </div>
+      </aside>
+
+      <section class="panel request-panel" aria-label="Constructor de petición">
+        <div class="panel-heading">
+          <div>
+            <h2>Constructor de petición</h2>
+            <p>Configura y envía llamadas al API</p>
+          </div>
+        </div>
+
+        <div class="request-bar">
+          <label class="sr-only" for="method-select">Método HTTP</label>
+          <select id="method-select" class="select method-select" data-method="GET" aria-label="Método HTTP">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="PATCH">PATCH</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+          <label class="sr-only" for="path-input">Ruta relativa</label>
+          <input id="path-input" class="input path-input" type="text" spellcheck="false" placeholder="/api/v1/areas" value="/api/v1/areas">
+          <button id="send-btn" class="btn btn-primary send-btn" type="button">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 4 16 8-16 8 3-8-3-8Z"/><path d="M7 12h13"/></svg>
+            <span>Enviar Petición</span>
+          </button>
+        </div>
+
+        <p class="endpoint-meta" id="endpoint-meta">Selecciona un endpoint del catálogo o escribe una ruta manualmente.</p>
+
+        <div class="url-box">
+          <div class="url-box-head">
+            <span>URL completa</span>
+            <button id="copy-url-btn" class="link-btn" type="button">Copiar</button>
+          </div>
+          <code id="full-url">—</code>
+          <div class="url-proxy" id="proxy-note" hidden>
+            <span class="proxy-dot"></span>
+            Petición proxificada mediante <strong>corsproxy.io</strong>
+          </div>
+        </div>
+
+        <div class="request-options">
+          <label class="switch">
+            <input type="checkbox" id="cors-toggle">
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+            <span class="switch-copy">
+              <strong>Bypass CORS</strong>
+              <small>Proxy para dominios sin Access-Control-Allow-Origin</small>
+            </span>
+          </label>
+          <span class="env-hint" id="env-hint"></span>
+        </div>
+
+        <div class="tabs request-tabs" role="tablist" aria-label="Configuración de la petición">
+          <button class="tab-btn is-active" data-request-tab="headers" role="tab" aria-selected="true" type="button">Cabeceras <span class="tab-count" id="headers-count">0</span></button>
+          <button class="tab-btn" data-request-tab="query" role="tab" aria-selected="false" type="button">Query Params <span class="tab-count" id="query-count">0</span></button>
+          <button class="tab-btn" data-request-tab="body" role="tab" aria-selected="false" type="button">Body</button>
+        </div>
+
+        <div class="tab-panels">
+          <div class="tab-panel" data-request-panel="headers">
+            <div class="auto-headers">
+              <div class="auto-headers-head">
+                <span>Cabeceras automáticas</span>
+                <button id="edit-auth-btn" class="link-btn" type="button">Editar credenciales</button>
+              </div>
+              <div id="auto-headers-list" class="auto-headers-list"></div>
+            </div>
+            <div class="kv-header"><span>Clave</span><span>Valor</span><span></span></div>
+            <div id="headers-list" class="kv-list"></div>
+            <button id="add-header-btn" class="btn btn-dashed" type="button">
+              <span class="plus">+</span> Añadir cabecera
+            </button>
+          </div>
+
+          <div class="tab-panel" data-request-panel="query" hidden>
+            <div class="kv-header"><span>Clave</span><span>Valor</span><span></span></div>
+            <div id="query-list" class="kv-list"></div>
+            <button id="add-query-btn" class="btn btn-dashed" type="button">
+              <span class="plus">+</span> Añadir parámetro
+            </button>
+            <p class="hint">Los parámetros se reflejan en la URL completa en tiempo real.</p>
+          </div>
+
+          <div class="tab-panel" data-request-panel="body" hidden>
+            <div class="body-warning" id="body-warning" hidden>
+              <span aria-hidden="true">⚠️</span>
+              <span>Nota: Las peticiones GET comúnmente no procesan body.</span>
+            </div>
+            <div id="json-editor-wrap">
+              <div class="body-toolbar">
+                <span class="body-label">Cuerpo JSON</span>
+                <div class="body-actions">
+                  <span id="body-status" class="body-status"></span>
+                  <button id="beautify-btn" class="btn btn-soft" type="button">Embellecer JSON</button>
+                </div>
+              </div>
+              <textarea id="body-input" class="body-editor" spellcheck="false" placeholder='{&#10;  "clave": "valor"&#10;}'></textarea>
+            </div>
+            <div id="multipart-wrap" class="multipart" hidden>
+              <div class="multipart-head">
+                <span class="multipart-icon">⇪</span>
+                <div>
+                  <strong>multipart/form-data</strong>
+                  <p>Este endpoint espera un archivo adjunto. El navegador construirá el boundary automáticamente.</p>
+                </div>
+              </div>
+              <input type="file" id="file-input" class="file-input" aria-label="Archivo a subir">
+              <p id="file-name" class="hint">Ningún archivo seleccionado.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel response-panel" aria-label="Visualizador de respuesta">
+        <div class="response-head">
+          <div class="panel-heading compact">
+            <div>
+              <h2>Respuesta</h2>
+              <p>Resultado del servidor</p>
+            </div>
+          </div>
+          <div class="response-metrics">
+            <span class="status-badge status-idle" id="status-badge">Sin respuesta</span>
+            <span class="metric-chip" id="response-method">—</span>
+            <span class="metric"><span class="metric-label">Tiempo</span><strong id="response-time">— ms</strong></span>
+            <span class="metric"><span class="metric-label">Tamaño</span><strong id="response-size">—</strong></span>
+          </div>
+        </div>
+
+        <div id="cors-alert" class="cors-alert" hidden>
+          <div class="cors-alert-icon" aria-hidden="true">!</div>
+          <div class="cors-alert-copy">
+            <strong>Posible Bloqueo por CORS o Error de Red</strong>
+            <p id="cors-alert-text">No se pudo completar la petición.</p>
+            <button id="retry-cors-btn" class="btn btn-warning" type="button">¿Reintentar con CORS Proxy activado?</button>
+          </div>
+        </div>
+
+        <div class="tabs response-tabs" role="tablist" aria-label="Contenido de la respuesta">
+          <button class="tab-btn is-active" data-response-tab="json" role="tab" aria-selected="true" type="button">JSON</button>
+          <button class="tab-btn" data-response-tab="raw" role="tab" aria-selected="false" type="button">Raw</button>
+          <button class="tab-btn" data-response-tab="headers" role="tab" aria-selected="false" type="button">Headers <span class="tab-count" id="response-headers-count">0</span></button>
+          <button id="copy-json-btn" class="link-btn response-copy" type="button" disabled>Copiar JSON</button>
+        </div>
+
+        <div class="response-content">
+          <div id="response-empty" class="empty-state">
+            <div class="empty-icon" aria-hidden="true">{&nbsp;}</div>
+            <p>Envía una petición para visualizar la respuesta.</p>
+            <small>Método, latencia y tamaño aparecerán aquí.</small>
+          </div>
+
+          <div id="response-loading" class="loading-state" hidden>
+            <span class="spinner" aria-hidden="true"></span>
+            <p>Consultando Cronode API...</p>
+            <small>Esperando respuesta del servidor</small>
+          </div>
+
+          <div class="response-tab-panel" data-response-panel="json" hidden>
+            <pre id="response-json" class="code-block"></pre>
+          </div>
+          <div class="response-tab-panel" data-response-panel="raw" hidden>
+            <pre id="response-raw" class="code-block raw"></pre>
+          </div>
+          <div class="response-tab-panel" data-response-panel="headers" hidden>
+            <div id="response-headers" class="response-headers"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="credentials-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="credentials-title">
+      <div class="modal-head">
+        <div>
+          <h2 id="credentials-title">Credenciales / Autenticación</h2>
+          <p>Configura el JWT y la API key usados en las peticiones.</p>
+        </div>
+        <button class="icon-btn modal-close" type="button" data-close="credentials-modal" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <section class="auth-section">
+          <div class="auth-section-head">
+            <h3>Autenticación Interna (JWT Bearer)</h3>
+            <span id="jwt-state" class="status-dot offline">Sin token</span>
+          </div>
+          <label class="field">
+            <span>JWT activo</span>
+            <span class="input-with-action">
+              <input id="jwt-input" type="password" spellcheck="false" autocomplete="off" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6...">
+              <button class="reveal-btn" type="button" data-toggle-visibility="jwt-input">Ver</button>
+            </span>
+          </label>
+          <div class="row-actions">
+            <button id="save-jwt-btn" class="btn btn-primary-sm" type="button">Guardar token</button>
+            <button id="clear-jwt-btn" class="btn btn-soft" type="button">Limpiar</button>
+          </div>
+
+          <div class="quick-login">
+            <div class="quick-login-title">
+              <span>⚡ Login Rápido</span>
+              <small>POST /api/v1/auth/authenticate</small>
+            </div>
+            <form id="login-form" class="login-form" novalidate>
+              <div class="login-grid">
+                <label class="field">
+                  <span>Email</span>
+                  <input id="login-email" type="email" autocomplete="username" placeholder="instructor@senacpic.edu.co" required>
+                </label>
+                <label class="field">
+                  <span>Password</span>
+                  <span class="input-with-action">
+                    <input id="login-password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+                    <button class="reveal-btn" type="button" data-toggle-visibility="login-password">Ver</button>
+                  </span>
+                </label>
+              </div>
+              <button id="login-btn" class="btn btn-primary" type="submit">Iniciar sesión y capturar token</button>
+              <p id="login-status" class="form-status" role="status"></p>
+            </form>
+          </div>
+        </section>
+
+        <section class="auth-section">
+          <div class="auth-section-head">
+            <h3>Autenticación Externa (API Key)</h3>
+            <span id="apikey-state" class="status-dot offline">Sin API key</span>
+          </div>
+          <label class="field">
+            <span>x-api-key</span>
+            <span class="input-with-action">
+              <input id="apikey-input" type="password" spellcheck="false" autocomplete="off" placeholder="Tu API key">
+              <button class="reveal-btn" type="button" data-toggle-visibility="apikey-input">Ver</button>
+            </span>
+          </label>
+          <div class="key-chips" id="key-chips"></div>
+          <div class="row-actions">
+            <button id="save-apikey-btn" class="btn btn-primary-sm" type="button">Guardar API key</button>
+            <button id="clear-apikey-btn" class="btn btn-soft" type="button">Limpiar</button>
+          </div>
+        </section>
+
+        <p class="storage-note">Las credenciales se almacenan en el <code>localStorage</code> de este navegador y se envían solo al API configurado.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="credits-modal" hidden>
+    <div class="modal credits-modal" role="dialog" aria-modal="true" aria-labelledby="credits-title">
+      <div class="modal-head">
+        <div>
+          <h2 id="credits-title">Créditos del Desarrollador</h2>
+          <p>Información institucional del proyecto.</p>
+        </div>
+        <button class="icon-btn modal-close" type="button" data-close="credits-modal" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="credits-card">
+          <div class="credits-avatar" aria-hidden="true">JS</div>
+          <div class="credits-info">
+            <h3>Julian Salazar Pineda</h3>
+            <p class="credits-role">Desarrollador de Software • Instructor del Área de Software</p>
+            <p class="credits-center">SENA Regional Caldas - Centro de Procesos Industriales y Construcción (CPIC)</p>
+            <div class="credits-meta">
+              <span class="version-chip">v2.0.0</span>
+              <a class="btn btn-soft" href="mailto:Jsalazar@sena.edu.co">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                Jsalazar@sena.edu.co
+              </a>
+            </div>
+          </div>
+        </div>
+        <p class="credits-foot">CRONODE API Test · Herramienta académica para pruebas de servicios REST.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-backdrop" id="history-backdrop" hidden></div>
+  <aside class="drawer" id="history-drawer" aria-label="Historial de peticiones" hidden>
+    <div class="drawer-head">
+      <div>
+        <h2>Historial de Peticiones</h2>
+        <p>Últimas 50 peticiones guardadas</p>
+      </div>
+      <button class="icon-btn modal-close" type="button" data-close="history-drawer" aria-label="Cerrar historial">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="drawer-actions">
+      <button id="clear-history-btn" class="btn btn-soft" type="button">Limpiar historial</button>
+    </div>
+    <div id="history-list" class="history-list"></div>
+  </aside>
+
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <script src="endpoints.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

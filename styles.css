@@ -2004,6 +2004,10 @@ select.select option {
     rgba(9, 14, 21, 0.4);
 }
 
+.credits-card + .credits-card {
+  margin-top: 12px;
+}
+
 .credits-avatar {
   width: 62px;
   height: 62px;
@@ -2017,6 +2021,11 @@ select.select option {
   background: linear-gradient(135deg, #bef264 0%, #38bdf8 100%);
   box-shadow: 0 0 24px rgba(56, 189, 248, 0.28);
   flex-shrink: 0;
+}
+
+.credits-avatar-alt {
+  background: linear-gradient(135deg, #c084fc 0%, #38bdf8 100%);
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.28);
 }
 
 .credits-info {
